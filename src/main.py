@@ -1,12 +1,23 @@
 from flask import Flask, render_template, request, jsonify
-
-from src.models.RelatorioRecebido import RelatorioRecebido
+from flask_sqlalchemy import SQLAlchemy
 
 #Cria a aplicação flask
 app = Flask(__name__)
 
-#Variaveis
-lista_relatorios = []
+#Banco de dados
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///relatorios.db"
+db = SQLAlchemy(app)
+
+class RelatorioDB(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    temperatura = db.Column(db.Float)
+    umidade = db.Column(db.Float)
+    pressao = db.Column(db.Float)
+    luminosidade = db.Column(db.Float)
+    qualidade_ar = db.Column(db.Float)
+
+with app.app_context():
+    db.create_all()
 
 #Rotas
 
@@ -17,15 +28,17 @@ def relatorioPost():
     dados = request.json
 
     #Tranforma os dados recebidos em uma instacia do relatorio
-    relatorio = RelatorioRecebido(
-        dados['temperatura'],
-        dados['umidade'],
-        dados['pressao'],
-        dados['luminosidade'],
-        dados['qualidade_ar']
+    relatorio = RelatorioDB(
+        temperatura=dados['temperatura'],
+        umidade=dados['umidade'],
+        pressao=dados['pressao'],
+        luminosidade=dados['luminosidade'],
+        qualidade_ar=dados['qualidade_ar']
     )
-    #adicioa o relatorio na lista de relatorios
-    lista_relatorios.append(relatorio)
+
+    #adiciona o relatorio no banco de dados
+    db.session.add(relatorio)
+    db.session.commit()
 
     #retorna a mensagem de sucesso
     return {"mensagem" : "Relatorio Recebido"}, 200
@@ -33,15 +46,19 @@ def relatorioPost():
 #GET Relatorios
 @app.route("/relatorio" ,methods=['GET'])
 def relatorioGet():
+    relatorios = RelatorioDB.query.all()
+    print(relatorios)
+
     return jsonify([
         {
+            "id": relatorio.id,
             "temperatura": relatorio.temperatura,
             "umidade": relatorio.umidade,
             "pressao": relatorio.pressao,
             "luminosidade": relatorio.luminosidade,
             "qualidade_ar": relatorio.qualidade_ar
         }
-        for relatorio in lista_relatorios
+        for relatorio in relatorios
     ])
 
 #Rota Padrão
