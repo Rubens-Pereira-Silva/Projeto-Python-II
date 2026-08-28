@@ -1,22 +1,17 @@
 from flask import Flask, render_template, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from src.data.database import db
+
+#Import das classes
+from models.RelatorioDB import RelatorioDB
 
 #Cria a aplicação flask
 app = Flask(__name__)
 
 #Banco de dados
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///relatorios.db"
-db = SQLAlchemy(app)
-
-class RelatorioDB(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    temperatura = db.Column(db.Float)
-    umidade = db.Column(db.Float)
-    pressao = db.Column(db.Float)
-    luminosidade = db.Column(db.Float)
-    qualidade_ar = db.Column(db.Float)
 
 with app.app_context():
+    db.init_app(app)
     db.create_all()
 
 #Rotas
