@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request, jsonify
+
+import services.RelatorioService
+from services import RelatorioService
 from src.data.database import db
 
 #Import das classes
@@ -7,11 +10,11 @@ from models.RelatorioDB import RelatorioDB
 #Cria a aplicação flask
 app = Flask(__name__)
 
-#Banco de dados
+#Configurações do App
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///relatorios.db"
-
+db.init_app(app)
+#Contexto do app
 with app.app_context():
-    db.init_app(app)
     db.create_all()
 
 #Rotas
@@ -21,22 +24,8 @@ with app.app_context():
 def relatorioPost():
     #Pega os dados recebidos
     dados = request.json
+    return RelatorioService.RelatorioPOST(dados)
 
-    #Tranforma os dados recebidos em uma instacia do relatorio
-    relatorio = RelatorioDB(
-        temperatura=dados['temperatura'],
-        umidade=dados['umidade'],
-        pressao=dados['pressao'],
-        luminosidade=dados['luminosidade'],
-        qualidade_ar=dados['qualidade_ar']
-    )
-
-    #adiciona o relatorio no banco de dados
-    db.session.add(relatorio)
-    db.session.commit()
-
-    #retorna a mensagem de sucesso
-    return {"mensagem" : "Relatorio Recebido"}, 200
 
 #GET Relatorios
 @app.route("/relatorio" ,methods=['GET'])
