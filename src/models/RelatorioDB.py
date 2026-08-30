@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from src.data.database import db
 
 class RelatorioDB(db.Model):
@@ -7,3 +9,4 @@ class RelatorioDB(db.Model):
     pressao = db.Column(db.Float)
     luminosidade = db.Column(db.Float)
     qualidade_ar = db.Column(db.Float)
+    data = db.Column(db.DateTime, default=datetime.now)

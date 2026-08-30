@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, jsonify
-
-import services.RelatorioService
 from services import RelatorioService
 from src.data.database import db
 
@@ -40,7 +38,8 @@ def relatorioGet():
             "umidade": relatorio.umidade,
             "pressao": relatorio.pressao,
             "luminosidade": relatorio.luminosidade,
-            "qualidade_ar": relatorio.qualidade_ar
+            "qualidade_ar": relatorio.qualidade_ar,
+            "data_criacao": relatorio.data,
         }
         for relatorio in relatorios
     ])
@@ -53,4 +52,5 @@ def home():
 
 
 #inicia a aplicação flask
-app.run()
+if __name__ == '__main__':
+    app.run(debug=True)
