@@ -1,5 +1,5 @@
 from src.data.database import db
-from models.RelatorioDB import RelatorioDB
+from src.models.RelatorioDB import RelatorioDB
 
 #POST Relatorio
 def RelatorioPOST(dados):

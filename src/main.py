@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, jsonify
-from services import RelatorioService
+from src.services import RelatorioService
 from src.data.database import db
 
 #Import das classes
-from models.RelatorioDB import RelatorioDB
+from src.models.RelatorioDB import RelatorioDB
 
 #Cria a aplicação flask
 app = Flask(__name__)
