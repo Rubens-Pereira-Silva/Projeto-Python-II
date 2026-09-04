@@ -17,3 +17,9 @@ def RelatorioPOST(dados):
     db.session.commit()
     #retorna a mensagem de sucesso
     return {"mensagem" : "Relatorio Recebido"}, 201
+
+#GET Last relatorio
+def RelatorioGETLast():
+    #Pega o ultimo relatorio que foi add no sistema
+    ultimo_relatorio = RelatorioDB.query.order_by(RelatorioDB.id.desc()).first()
+    return ultimo_relatorio

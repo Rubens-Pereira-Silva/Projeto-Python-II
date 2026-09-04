@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from services import RelatorioService
+from src.services import RelatorioService
 from src.data.database import db
 
 #Import das classes
@@ -29,7 +29,6 @@ def relatorioPost():
 @app.route("/relatorio" ,methods=['GET'])
 def relatorioGet():
     relatorios = RelatorioDB.query.all()
-    print(relatorios)
 
     return jsonify([
         {
@@ -43,6 +42,20 @@ def relatorioGet():
         }
         for relatorio in relatorios
     ])
+#GET Ultimo Relatorio
+@app.route("/relatorio/last" ,methods=['GET'])
+def relatorioGetLast():
+    #Busca o ultimo relatorio que foi adicionado
+    relatorio = RelatorioService.RelatorioGETLast()
+    return jsonify({
+            "id": relatorio.id,
+            "temperatura": relatorio.temperatura,
+            "umidade": relatorio.umidade,
+            "pressao": relatorio.pressao,
+            "luminosidade": relatorio.luminosidade,
+            "qualidade_ar": relatorio.qualidade_ar,
+            "data_criacao": relatorio.data,
+        })
 
 #Rota Padrão
 @app.route('/')
